@@ -47,4 +47,20 @@ public class GameManagerTest {
         Assertions.assertFalse(isOccupiedAfter);
     }
 
+    @Test
+    public void should_notExitBounds() {
+        // Given
+        TileMap tileMap = new TileMap(1, 1);
+        GameManager gameManager = new GameManager(tileMap);
+        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.N);
+        gameManager.addAdventurerIfExplorableTile(adventurer);
+
+        // When
+        gameManager.moveForward(adventurer);
+
+        // Then
+        Assertions.assertEquals(0, adventurer.getColX());
+        Assertions.assertEquals(0, adventurer.getRowY());
+    }
+
 }
