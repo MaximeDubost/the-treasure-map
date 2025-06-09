@@ -63,4 +63,42 @@ public class GameManagerTest {
         Assertions.assertEquals(0, adventurer.getRowY());
     }
 
+    @Test
+    public void should_goToOppositeCornerOfTileMap_with_turnLeft() {
+        // Given
+        TileMap tileMap = new TileMap(2, 2);
+        GameManager gameManager = new GameManager(tileMap);
+        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.S);
+        gameManager.addAdventurerIfExplorableTile(adventurer);
+
+        // When
+        gameManager.moveForward(adventurer);
+        gameManager.turnLeft(adventurer);
+        gameManager.moveForward(adventurer);
+
+        // Then
+        Assertions.assertEquals(1, adventurer.getColX());
+        Assertions.assertEquals(1, adventurer.getRowY());
+        Assertions.assertEquals(Orientation.E, adventurer.getOrientation());
+    }
+
+    @Test
+    public void should_goToOppositeCornerOfTileMap_with_turnRight() {
+        // Given
+        TileMap tileMap = new TileMap(2, 2);
+        GameManager gameManager = new GameManager(tileMap);
+        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.E);
+        gameManager.addAdventurerIfExplorableTile(adventurer);
+
+        // When
+        gameManager.moveForward(adventurer);
+        gameManager.turnRight(adventurer);
+        gameManager.moveForward(adventurer);
+
+        // Then
+        Assertions.assertEquals(1, adventurer.getColX());
+        Assertions.assertEquals(1, adventurer.getRowY());
+        Assertions.assertEquals(Orientation.S, adventurer.getOrientation());
+    }
+
 }
