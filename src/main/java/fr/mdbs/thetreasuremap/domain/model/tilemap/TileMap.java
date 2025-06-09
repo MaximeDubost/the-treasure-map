@@ -1,0 +1,72 @@
+package fr.mdbs.thetreasuremap.domain.model.tilemap;
+
+import fr.mdbs.thetreasuremap.domain.model.adventurer.Adventurer;
+import fr.mdbs.thetreasuremap.domain.model.tile.ExplorableTile;
+import fr.mdbs.thetreasuremap.domain.model.tile.MountainTile;
+import fr.mdbs.thetreasuremap.domain.model.tile.PlainTile;
+import fr.mdbs.thetreasuremap.domain.model.tile.Tile;
+import lombok.Getter;
+
+import java.util.Optional;
+
+public final class TileMap {
+    @Getter
+    private final int width;
+    @Getter
+    private final int height;
+    private final Tile[][] tiles;
+
+    public TileMap(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.tiles = new Tile[height][width];
+
+        for (int rowY = 0; rowY < height; rowY++) {
+            for (int colX = 0; colX < width; colX++) {
+                tiles[rowY][colX] = new PlainTile(colX, rowY);
+            }
+        }
+    }
+
+    public Tile getTile(int colX, int rowY) {
+        return tiles[rowY][colX];
+    }
+
+    public void setTile(int colX, int rowY, Tile tile) {
+        tiles[rowY][colX] = tile;
+    }
+
+    public Optional<ExplorableTile> getExplorableTile(int colX, int rowY) {
+        if(tiles[rowY][colX] instanceof ExplorableTile explorableTile) {
+            return Optional.of(explorableTile);
+        }
+        return Optional.empty();
+    }
+
+    public ExplorableTile getAdventurerTile(Adventurer adventurer) {
+        return (ExplorableTile) tiles[adventurer.getRowY()][adventurer.getColX()];
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("\n");
+
+        for (int rowY = 0; rowY < height; rowY++) {
+            for (int colX = 0; colX < width; colX++) {
+                Tile tile = getTile(colX, rowY);
+                if (tile != null) {
+                    if(tile instanceof PlainTile plainTile) {
+                        result.append(plainTile.getTreasureCount() > 0 ? " T ": " . ");
+                    }
+                    if(tile instanceof MountainTile) {
+                        result.append(" M ");
+                    }
+                }
+            }
+            result.append("\n");
+        }
+        return result.toString();
+    }
+
+}
