@@ -17,8 +17,8 @@ public final class TileMap {
     private final Tile[][] tiles;
 
     public TileMap(int width, int height) {
-        this.width = width;
-        this.height = height;
+        this.width = Math.max(width, 1);
+        this.height = Math.max(height, 1);
         this.tiles = new Tile[height][width];
 
         for (int rowY = 0; rowY < height; rowY++) {
