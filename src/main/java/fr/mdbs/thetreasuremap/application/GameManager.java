@@ -45,4 +45,12 @@ public class GameManager {
     private boolean isInBounds(int x, int y) {
         return x >= 0 && y >= 0 && x < tileMap.getWidth() && y < tileMap.getHeight();
     }
+
+    public void turnLeft(Adventurer adventurer) {
+        adventurer.turnLeft();
+    }
+
+    public void turnRight(Adventurer adventurer) {
+        adventurer.turnRight();
+    }
 }

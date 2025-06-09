@@ -1,11 +1,10 @@
 package fr.mdbs.thetreasuremap.domain.model.adventurer;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public final class Adventurer implements Occupant {
+public final class Adventurer implements Occupant, Rotatable {
     private final String name;
     private int colX, rowY;
     @Setter
@@ -18,8 +17,25 @@ public final class Adventurer implements Occupant {
         this.orientation = orientation;
     }
 
+    public Adventurer(String name, Orientation orientation) {
+        this.name = name;
+        this.colX = 0;
+        this.rowY = 0;
+        this.orientation = orientation;
+    }
+
     public void setPosition(int x, int y) {
         this.colX = x;
         this.rowY = y;
+    }
+
+    @Override
+    public void turnLeft() {
+        this.orientation = this.orientation.turnLeft();
+    }
+
+    @Override
+    public void turnRight() {
+        this.orientation = this.orientation.turnRight();
     }
 }

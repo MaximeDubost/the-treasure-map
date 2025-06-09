@@ -16,4 +16,12 @@ public enum Orientation {
         this.dx = dx;
         this.dy = dy;
     }
+
+    public Orientation turnLeft() {
+        return values()[(this.ordinal() + 3) % 4];
+    }
+
+    public Orientation turnRight() {
+        return values()[(this.ordinal() + 1) % 4];
+    }
 }
