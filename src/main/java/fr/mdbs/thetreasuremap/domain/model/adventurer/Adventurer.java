@@ -1,32 +1,33 @@
 package fr.mdbs.thetreasuremap.domain.model.adventurer;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 @Getter
-public final class Adventurer implements Occupant, Rotatable {
+@SuperBuilder
+public final class Adventurer extends Occupant implements Rotatable {
     private final String name;
-    private int colX, rowY;
     @Setter
     private Orientation orientation;
+    @Builder.Default
+    private Queue<Movement> movementQueue = new LinkedList<>();
+    @Setter
+    @Builder.Default
+    private int treasureCount = 0;
 
     public Adventurer(String name, int colX, int rowY, Orientation orientation) {
+        super(Math.max(colX, 0), Math.max(rowY, 0));
         this.name = name;
-        this.colX = Math.max(colX, 0);
-        this.rowY = Math.max(rowY, 0);
         this.orientation = orientation;
     }
 
     public Adventurer(String name, Orientation orientation) {
+        super(0, 0);
         this.name = name;
-        this.colX = 0;
-        this.rowY = 0;
         this.orientation = orientation;
-    }
-
-    public void setPosition(int x, int y) {
-        this.colX = x;
-        this.rowY = y;
     }
 
     @Override

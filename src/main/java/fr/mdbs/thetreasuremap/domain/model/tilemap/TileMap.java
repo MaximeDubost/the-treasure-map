@@ -1,6 +1,7 @@
 package fr.mdbs.thetreasuremap.domain.model.tilemap;
 
 import fr.mdbs.thetreasuremap.domain.model.adventurer.Adventurer;
+import fr.mdbs.thetreasuremap.domain.model.adventurer.Occupant;
 import fr.mdbs.thetreasuremap.domain.model.tile.ExplorableTile;
 import fr.mdbs.thetreasuremap.domain.model.tile.MountainTile;
 import fr.mdbs.thetreasuremap.domain.model.tile.PlainTile;
@@ -36,6 +37,10 @@ public final class TileMap {
         tiles[rowY][colX] = tile;
     }
 
+    public void setTile(Tile tile) {
+        tiles[tile.getRowY()][tile.getColX()] = tile;
+    }
+
     public Optional<ExplorableTile> getExplorableTile(int colX, int rowY) {
         if(tiles[rowY][colX] instanceof ExplorableTile explorableTile) {
             return Optional.of(explorableTile);
@@ -45,6 +50,13 @@ public final class TileMap {
 
     public ExplorableTile getAdventurerTile(Adventurer adventurer) {
         return (ExplorableTile) tiles[adventurer.getRowY()][adventurer.getColX()];
+    }
+
+    public void placeOccupantIfExplorableTile(Occupant occupant) {
+        Tile tile = tiles[occupant.getRowY()][occupant.getColX()];
+        if(tile instanceof ExplorableTile explorableTile) {
+            explorableTile.setOccupant(occupant);
+        }
     }
 
     @Override
@@ -57,7 +69,12 @@ public final class TileMap {
                 Tile tile = getTile(colX, rowY);
                 if (tile != null) {
                     if(tile instanceof PlainTile plainTile) {
-                        result.append(plainTile.getTreasureCount() > 0 ? " T ": " . ");
+                        if(plainTile.isOccupied())
+                            result.append(" A ");
+                        else if (plainTile.getTreasureCount() > 0)
+                            result.append(" T ");
+                        else
+                            result.append(" . ");
                     }
                     if(tile instanceof MountainTile) {
                         result.append(" M ");

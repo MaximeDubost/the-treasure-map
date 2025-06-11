@@ -1,5 +1,6 @@
 package fr.mdbs.thetreasuremap.application;
 
+import fr.mdbs.thetreasuremap.adapter.inbound.FileParser;
 import fr.mdbs.thetreasuremap.domain.model.adventurer.Adventurer;
 import fr.mdbs.thetreasuremap.domain.model.tile.ExplorableTile;
 import fr.mdbs.thetreasuremap.domain.model.tile.Tile;
@@ -22,7 +23,7 @@ public class GameManager {
         Tile tile = tileMap.getTile(adventurer.getColX(), adventurer.getRowY());
         if(tile instanceof ExplorableTile explorableTile) {
             adventurers.add(adventurer);
-            explorableTile.setOccupied(true);
+            explorableTile.setOccupant(adventurer);
         }
     }
 
@@ -36,8 +37,8 @@ public class GameManager {
         Tile targetTile = tileMap.getTile(targetX, targetY);
 
         if(targetTile instanceof ExplorableTile targetExplorableTile) {
-            currentTile.setOccupied(false);
-            targetExplorableTile.setOccupied(true);
+            currentTile.clearOccupant();
+            targetExplorableTile.setOccupant(adventurer);
             adventurer.setPosition(targetX, targetY);
         }
     }
@@ -53,4 +54,6 @@ public class GameManager {
     public void turnRight(Adventurer adventurer) {
         adventurer.turnRight();
     }
+
+
 }
