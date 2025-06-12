@@ -5,60 +5,78 @@ import fr.mdbs.thetreasuremap.domain.model.adventurer.Movement;
 import fr.mdbs.thetreasuremap.domain.model.adventurer.Orientation;
 import fr.mdbs.thetreasuremap.domain.model.tile.MountainTile;
 import fr.mdbs.thetreasuremap.domain.model.tile.PlainTile;
+import fr.mdbs.thetreasuremap.domain.model.tile.Tile;
 import fr.mdbs.thetreasuremap.domain.model.tilemap.InputLineType;
 import fr.mdbs.thetreasuremap.domain.model.tilemap.TileMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 
-public class TileMapBuilder {
+public final class TileMapBuilder {
+    private static final Logger log = LoggerFactory.getLogger(TileMapBuilder.class);
+
     private TileMap tileMap;
 
     public void acceptLine(String rawLine) {
         String line = rawLine.trim();
         if (line.isEmpty() || line.startsWith("#")) return;
 
-        InputLineType type = InputLineType.valueOf(line.substring(0, 1)); // TODO : handle IllegalArgumentException
-        Matcher matcher = type.getPattern().matcher(line);
-
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("Line does not match pattern for type " + type + ": " + line);
+        InputLineType type;
+        try {
+            type = InputLineType.valueOf(line.substring(0, 1));
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid input line: {}", line);
+            return;
         }
 
+        Matcher m = type.getPattern().matcher(line);
+        if (!m.matches()) return;
+
         switch (type) {
-            case C -> tileMap = new TileMap(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
+            case C -> tileMap = new TileMap(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
             case M -> ensureMapThenRun(() -> tileMap.setTile(
                     MountainTile.builder()
-                            .colX(Integer.parseInt(matcher.group(1)))
-                            .rowY(Integer.parseInt(matcher.group(2)))
+                            .colX(Integer.parseInt(m.group(1)))
+                            .rowY(Integer.parseInt(m.group(2)))
                             .build()));
-            case T -> ensureMapThenRun(() -> tileMap.setTile(
-                    PlainTile.builder()
-                            .colX(Integer.parseInt(matcher.group(1)))
-                            .rowY(Integer.parseInt(matcher.group(2)))
-                            .treasureCount(Integer.parseInt(matcher.group(3)))
-                            .build()));
+            case T -> ensureMapThenRun(() -> {
+                if(tileMap.getExplorableTile(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))).isPresent()) {
+                    tileMap.setTile(PlainTile.builder()
+                            .colX(Integer.parseInt(m.group(1)))
+                            .rowY(Integer.parseInt(m.group(2)))
+                            .treasureCount(Integer.parseInt(m.group(3)))
+                            .build());
+                } else {
+                    log.warn("Unable to place a treasure in an unexplorable tile");
+                }
+            });
             case A -> ensureMapThenRun(() -> {
                 Adventurer adventurer = Adventurer.builder()
-                        .name(matcher.group(1))
-                        .colX(Integer.parseInt(matcher.group(2)))
-                        .rowY(Integer.parseInt(matcher.group(3)))
-                        .orientation(Orientation.valueOf(matcher.group(4)))
-                        .movementQueue(Movement.queue(matcher.group(5)))
+                        .name(m.group(1))
+                        .colX(Integer.parseInt(m.group(2)))
+                        .rowY(Integer.parseInt(m.group(3)))
+                        .orientation(Orientation.valueOf(m.group(4)))
+                        .movementQueue(Movement.queue(m.group(5)))
                         .build();
                 tileMap.placeOccupantIfExplorableTile(adventurer);
             });
         }
     }
 
-    public TileMap build() {
-        if (tileMap == null)
-            throw new IllegalStateException("No map defined in input");
-        return tileMap;
+    public Optional<TileMap> build() {
+        if (tileMap == null) {
+            log.error("Unable to build TileMap");
+            return Optional.empty();
+        }
+        return Optional.of(tileMap);
     }
 
     private void ensureMapThenRun(Runnable action) {
         if (tileMap == null)
-            throw new IllegalStateException("TileMap must be defined before this line");
-        action.run();
+            log.warn("Unable to run action : no tile map found");
+        else
+            action.run();
     }
 }

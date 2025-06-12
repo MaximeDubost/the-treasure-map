@@ -8,6 +8,7 @@ import fr.mdbs.thetreasuremap.domain.model.tile.PlainTile;
 import fr.mdbs.thetreasuremap.domain.model.tile.Tile;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public final class TileMap {
@@ -33,18 +34,18 @@ public final class TileMap {
         return tiles[rowY][colX];
     }
 
-    public void setTile(int colX, int rowY, Tile tile) {
-        tiles[rowY][colX] = tile;
-    }
-
     public void setTile(Tile tile) {
-        tiles[tile.getRowY()][tile.getColX()] = tile;
+        try { tiles[tile.getRowY()][tile.getColX()] = tile; }
+        catch (IndexOutOfBoundsException ignored) {}
+
     }
 
     public Optional<ExplorableTile> getExplorableTile(int colX, int rowY) {
-        if(tiles[rowY][colX] instanceof ExplorableTile explorableTile) {
-            return Optional.of(explorableTile);
+        try {
+            if(tiles[rowY][colX] instanceof ExplorableTile explorableTile)
+                return Optional.of(explorableTile);
         }
+        catch (IndexOutOfBoundsException ignored) {}
         return Optional.empty();
     }
 
@@ -53,11 +54,32 @@ public final class TileMap {
     }
 
     public void placeOccupantIfExplorableTile(Occupant occupant) {
-        Tile tile = tiles[occupant.getRowY()][occupant.getColX()];
-        if(tile instanceof ExplorableTile explorableTile) {
-            explorableTile.setOccupant(occupant);
+        try {
+            Tile tile = tiles[occupant.getRowY()][occupant.getColX()];
+            if(tile instanceof ExplorableTile explorableTile) {
+                explorableTile.setOccupant(occupant);
+            }
         }
+        catch (IndexOutOfBoundsException ignored) {}
     }
+
+    public boolean hasAnyOccupant() {
+        return Arrays.stream(tiles)
+                .flatMap(Arrays::stream)
+                .filter(tile -> tile instanceof ExplorableTile)
+                .map(tile -> (ExplorableTile) tile)
+                .anyMatch(ExplorableTile::isOccupied);
+    }
+
+    public int getTotalTreasureCount() {
+        return Arrays.stream(tiles)
+                .flatMap(Arrays::stream)
+                .filter(tile -> tile instanceof ExplorableTile)
+                .map(tile -> (ExplorableTile) tile)
+                .mapToInt(ExplorableTile::getTreasureCount)
+                .sum();
+    }
+
 
     @Override
     public String toString() {
