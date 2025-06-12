@@ -4,7 +4,9 @@ import fr.mdbs.thetreasuremap.domain.model.adventurer.Adventurer;
 import fr.mdbs.thetreasuremap.domain.model.adventurer.Orientation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 public class AdventurerOrientationTest {
 
     @Test
