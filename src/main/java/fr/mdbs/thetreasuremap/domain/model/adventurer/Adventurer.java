@@ -9,7 +9,7 @@ import java.util.Queue;
 
 @Getter
 @SuperBuilder
-public final class Adventurer extends Occupant implements Rotatable {
+public final class Adventurer extends Occupant implements Rotatable, Looter {
     private final String name;
     @Setter
     private Orientation orientation;
@@ -47,5 +47,10 @@ public final class Adventurer extends Occupant implements Rotatable {
     @Override
     public void turnRight() {
         this.orientation = this.orientation.turnRight();
+    }
+
+    @Override
+    public void loot() {
+        this.treasureCount++;
     }
 }

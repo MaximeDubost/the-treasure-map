@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
-public abstract class ExplorableTile extends Tile implements Explorable {
+public abstract class ExplorableTile extends Tile implements Explorable, Lootable {
     @Builder.Default
     protected int treasureCount = 0;
     @Builder.Default
@@ -27,5 +27,15 @@ public abstract class ExplorableTile extends Tile implements Explorable {
     @Override
     public boolean isOccupied() {
         return this.occupant != null;
+    }
+
+    @Override
+    public boolean hasAnyTreasure() {
+        return this.treasureCount > 0;
+    }
+
+    @Override
+    public void decreaseTreasureCount() {
+        this.treasureCount--;
     }
 }

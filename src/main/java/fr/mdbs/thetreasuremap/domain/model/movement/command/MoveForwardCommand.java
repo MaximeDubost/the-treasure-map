@@ -20,6 +20,11 @@ public final class MoveForwardCommand implements SpatialMovementExecutable {
             currentTile.clearOccupant();
             targetExplorableTile.setOccupant(adventurer);
             adventurer.setPosition(targetX, targetY);
+
+            if (targetExplorableTile.hasAnyTreasure()) {
+                targetExplorableTile.decreaseTreasureCount();
+                adventurer.loot();
+            }
         }
     }
 }
