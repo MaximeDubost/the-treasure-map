@@ -1,6 +1,6 @@
 package fr.mdbs.thetreasuremap.domain.model.tilemap;
 
-import fr.mdbs.thetreasuremap.domain.model.adventurer.Movement;
+import fr.mdbs.thetreasuremap.domain.model.movement.Movement;
 import fr.mdbs.thetreasuremap.domain.model.adventurer.Orientation;
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public enum InputLineType {
+public enum IOLineType {
     C("^C - (\\d+) - (\\d+)$"),
     M("^M - (\\d+) - (\\d+)$"),
     T("^T - (\\d+) - (\\d+) - (\\d+)$"),
@@ -17,12 +17,28 @@ public enum InputLineType {
     @Getter
     private final Pattern pattern;
 
-    InputLineType(String regex) {
+    IOLineType(String regex) {
         this.pattern = Pattern.compile(regex);
     }
 
-    InputLineType(Pattern pattern) {
+    IOLineType(Pattern pattern) {
         this.pattern = pattern;
+    }
+
+    public static String formatC(int width, int height) {
+        return "C - " + width + " - " + height;
+    }
+
+    public static String formatM(int x, int y) {
+        return "M - " + x + " - " + y;
+    }
+
+    public static String formatT(int x, int y, int treasureCount) {
+        return "T - " + x + " - " + y + " - " + treasureCount;
+    }
+
+    public static String formatA(String name, int x, int y, Orientation orientation, int treasureCount) {
+        return "A - " + name + " - " + x + " - " + y + " - " + orientation.name() + " - " + treasureCount;
     }
 
     private static Pattern buildAdventurerPattern() {

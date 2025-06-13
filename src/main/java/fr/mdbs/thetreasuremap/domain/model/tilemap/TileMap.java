@@ -80,6 +80,9 @@ public final class TileMap {
                 .sum();
     }
 
+    public boolean hasTileAt(int colX, int rowY) {
+        return colX >= 0 && rowY >= 0 && colX < this.getWidth() && rowY < this.getHeight();
+    }
 
     @Override
     public String toString() {

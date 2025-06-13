@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.support.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.stream.Stream;
@@ -31,12 +33,12 @@ public class GameManagerTest {
                                    int initialColX, int initialRowY, int expectedColX, int expectedRowY) {
         // Given
         GameManager gameManager = new GameManager(tileMap);
-        Adventurer adventurer = new Adventurer("Max", initialColX, initialRowY, orientation);
-        gameManager.addAdventurerIfExplorableTile(adventurer);
+        Adventurer adventurer = new Adventurer("Max", initialColX, initialRowY, orientation, "A");
+        gameManager.placeOccupantIfExplorableTile(adventurer);
         boolean isOccupiedBefore = tileMap.getAdventurerTile(adventurer).isOccupied();
 
         // When
-        gameManager.moveForward(adventurer);
+        gameManager.play();
 
         // Then
         Assertions.assertEquals(expectedColX, adventurer.getColX());
@@ -52,11 +54,11 @@ public class GameManagerTest {
         // Given
         TileMap tileMap = new TileMap(1, 1);
         GameManager gameManager = new GameManager(tileMap);
-        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.N);
-        gameManager.addAdventurerIfExplorableTile(adventurer);
+        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.N, "A");
+        gameManager.placeOccupantIfExplorableTile(adventurer);
 
         // When
-        gameManager.moveForward(adventurer);
+        gameManager.play();
 
         // Then
         Assertions.assertEquals(0, adventurer.getColX());
@@ -68,13 +70,11 @@ public class GameManagerTest {
         // Given
         TileMap tileMap = new TileMap(2, 2);
         GameManager gameManager = new GameManager(tileMap);
-        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.S);
-        gameManager.addAdventurerIfExplorableTile(adventurer);
+        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.S, "AGA");
+        gameManager.placeOccupantIfExplorableTile(adventurer);
 
         // When
-        gameManager.moveForward(adventurer);
-        gameManager.turnLeft(adventurer);
-        gameManager.moveForward(adventurer);
+        gameManager.play();
 
         // Then
         Assertions.assertEquals(1, adventurer.getColX());
@@ -87,13 +87,11 @@ public class GameManagerTest {
         // Given
         TileMap tileMap = new TileMap(2, 2);
         GameManager gameManager = new GameManager(tileMap);
-        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.E);
-        gameManager.addAdventurerIfExplorableTile(adventurer);
+        Adventurer adventurer = new Adventurer("Max", 0, 0, Orientation.E, "ADA");
+        gameManager.placeOccupantIfExplorableTile(adventurer);
 
         // When
-        gameManager.moveForward(adventurer);
-        gameManager.turnRight(adventurer);
-        gameManager.moveForward(adventurer);
+        gameManager.play();
 
         // Then
         Assertions.assertEquals(1, adventurer.getColX());

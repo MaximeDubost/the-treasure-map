@@ -1,12 +1,11 @@
 package fr.mdbs.thetreasuremap.adapter.inbound;
 
 import fr.mdbs.thetreasuremap.domain.model.adventurer.Adventurer;
-import fr.mdbs.thetreasuremap.domain.model.adventurer.Movement;
+import fr.mdbs.thetreasuremap.domain.model.movement.Movement;
 import fr.mdbs.thetreasuremap.domain.model.adventurer.Orientation;
 import fr.mdbs.thetreasuremap.domain.model.tile.MountainTile;
 import fr.mdbs.thetreasuremap.domain.model.tile.PlainTile;
-import fr.mdbs.thetreasuremap.domain.model.tile.Tile;
-import fr.mdbs.thetreasuremap.domain.model.tilemap.InputLineType;
+import fr.mdbs.thetreasuremap.domain.model.tilemap.IOLineType;
 import fr.mdbs.thetreasuremap.domain.model.tilemap.TileMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +22,9 @@ public final class TileMapBuilder {
         String line = rawLine.trim();
         if (line.isEmpty() || line.startsWith("#")) return;
 
-        InputLineType type;
+        IOLineType type;
         try {
-            type = InputLineType.valueOf(line.substring(0, 1));
+            type = IOLineType.valueOf(line.substring(0, 1));
         } catch (IllegalArgumentException e) {
             log.warn("Invalid input line: {}", line);
             return;
@@ -53,14 +52,13 @@ public final class TileMapBuilder {
                 }
             });
             case A -> ensureMapThenRun(() -> {
-                Adventurer adventurer = Adventurer.builder()
+                tileMap.placeOccupantIfExplorableTile(Adventurer.builder()
                         .name(m.group(1))
                         .colX(Integer.parseInt(m.group(2)))
                         .rowY(Integer.parseInt(m.group(3)))
                         .orientation(Orientation.valueOf(m.group(4)))
                         .movementQueue(Movement.queue(m.group(5)))
-                        .build();
-                tileMap.placeOccupantIfExplorableTile(adventurer);
+                        .build());
             });
         }
     }
