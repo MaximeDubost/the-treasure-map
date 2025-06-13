@@ -1,13 +1,9 @@
 package fr.mdbs.thetreasuremap;
 
-import fr.mdbs.thetreasuremap.application.GameManager;
 import fr.mdbs.thetreasuremap.application.service.game.GameService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.support.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mock.web.MockMultipartFile;
@@ -17,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -44,9 +39,8 @@ public class TheTreasureMapApplicationTests {
         }
     }
 
-    @Disabled // TODO : handle treasures
     @Test
-    public void should_playScenario() throws IOException {
+    public void should_processMainScenario() throws IOException {
         // Given
         String expected, actual;
         String fileName = "input.txt";
@@ -64,13 +58,14 @@ public class TheTreasureMapApplicationTests {
         ByteArrayResource outputFile = gameService.process(inputFile);
 
         // Then
-        try (InputStream is = getClass().getResourceAsStream(outputResourcePath);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            expected = reader.lines().collect(Collectors.joining("\n"));
+        try (InputStream is = getClass().getResourceAsStream(outputResourcePath)) {
+            Assertions.assertNotNull(is);
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                expected = reader.lines().collect(Collectors.joining("\n"));
+            }
         }
         actual = new String(outputFile.getByteArray(), StandardCharsets.UTF_8);
 
-        // FIXME : handle treasures
         Assertions.assertEquals(expected, actual);
     }
 
