@@ -1,4 +1,4 @@
-package fr.mdbs.thetreasuremap.domain.model.adventurer;
+package fr.mdbs.thetreasuremap.domain.model.movement;
 
 import java.util.*;
 import java.util.stream.Collectors;
